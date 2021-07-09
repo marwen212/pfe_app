@@ -47,13 +47,6 @@ class _ScanQRCodeState extends State<ScanQRCode> {
             RaisedButton(
               onPressed: () {
                 scanQrCode();
-                Navigator.push(
-                  context,
-
-                  MaterialPageRoute(
-                    builder: (context) => Personnepage(qrCode: this.qrCode),
-                  ),
-                );
               //  Navigator.of(context).pushNamed(Personnepage.tag);
               },
               textColor: Colors.white,
@@ -83,6 +76,13 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       setState(() {
         this.qrCode = qrCode;
       });
+      Navigator.push(
+        context,
+
+        MaterialPageRoute(
+          builder: (context) => Personnepage(qrCode: this.qrCode),
+        ),
+      );
     } on PlatformException {
       qrCode = 'Failed to get platform version.';
     }
