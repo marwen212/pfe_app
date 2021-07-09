@@ -15,7 +15,7 @@ class Personnepage extends StatefulWidget {
 }
 
 class _PersonnepageState extends State<Personnepage> {
-  var init = false;
+  var init = true;
   var loading = true;
   Profile profile = Profile(
       nom_marchand: "",

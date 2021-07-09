@@ -119,7 +119,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: ScanQRCode(),
+      home: LoginPage(),
       routes: routes,
     );
   }
