@@ -1,9 +1,45 @@
+import 'package:association/api/api_profile.dart';
+import 'package:association/model/profile_model.dart';
 import 'package:flutter/material.dart';
 import 'validation_page.dart';
 
-class Personnepage extends StatelessWidget {
+class Personnepage extends StatefulWidget {
   static String tag = 'personne-page';
+  final  qrCode;
+  const Personnepage({
+    Key key,this.qrCode
+  }) : super(key: key);
 
+  @override
+  _PersonnepageState createState() => _PersonnepageState();
+}
+
+class _PersonnepageState extends State<Personnepage> {
+  var init = false;
+  var loading = true;
+  Profile profile = Profile(
+      nom_marchand: "",
+      prenom_marchand: "",
+      CIN: "",
+      tel: "",
+      adresse_marchand: "",
+      solde: 0);
+  @override
+  void didChangeDependencies() {
+   if(init){
+     APIprofileService().getProfileByCheque(widget.qrCode).then((value) {
+       setState(() {
+         this.profile = value;
+         loading = false;
+         init = false;
+       });
+     });
+     setState(() {
+       init = false;
+     });
+   }
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
     final Nom1 = Padding(

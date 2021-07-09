@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../model/profile_model.dart';
@@ -33,6 +34,39 @@ class APIprofileService {
       throw "Failed to load data!";
     }
   }
+
+
+
+  Future<Profile> getProfileByCheque(String qrCode) async {
+    final String profileByChequeURL = "http://192.168.1.10:8000/api/admin/get-personne-bycheque/$qrCode";
+    debugPrint("GET_PERSONNE URL : $profileByChequeURL");
+    var head = new Map<String, String>();
+    head['auth-token'] =LoginPage.token;
+    try {
+      final response = await http.get(Uri.parse(profileByChequeURL),headers: head);
+      final body = await jsonDecode(response.body);
+      debugPrint("GET_PERSONNE Body : $body");
+      if(body['status'] == true) {
+        debugPrint("GET_PERSONNE id : "+body['id'].toString());
+        debugPrint("GET_PERSONNE cin :"+body['CIN'].toString());
+
+        return Profile.fromJson(body);
+      }
+      else {
+        debugPrint("GET_PERSONNE HTTP_EXCEPTION : $body");
+        return Profile.fromJson(body);
+      }
+
+    } catch (error) {
+      var msg=error.toString();
+      debugPrint("GET_PERSONNE Error ${error.toString()}");
+      return  throw "$msg";
+    }
+  }
+
+
+
+
 
   _setHeaders() => {
         'auth-token': LoginPage.token,
