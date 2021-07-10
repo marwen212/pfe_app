@@ -39,6 +39,7 @@ class Profile {
   final String tel;
   final String adresse_marchand;
   final double solde;
+  final String validite;
   Profile({
     @required this.nom_marchand,
     @required this.prenom_marchand,
@@ -46,6 +47,7 @@ class Profile {
     @required this.tel,
     @required this.adresse_marchand,
     @required this.solde,
+    this.validite
   });
 
 
@@ -58,6 +60,7 @@ class Profile {
       tel: json['tel'].toString(),
       adresse_marchand: json['adresse_marchand'] as String,
       solde: json['solde'] == null ? 0.0 : double.parse(json['solde'].toString()),
+        validite: json['valdité'] == null ? 0.0 : json['valdité'].toString(),
     );
   }
 }

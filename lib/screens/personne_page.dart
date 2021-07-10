@@ -15,6 +15,11 @@ class Personnepage extends StatefulWidget {
 }
 
 class _PersonnepageState extends State<Personnepage> {
+  final nomController = TextEditingController();
+  final prenomController = TextEditingController();
+  final soldeController = TextEditingController();
+  final tlfController = TextEditingController();
+  final validController = TextEditingController();
   var init = true;
   var loading = true;
   Profile profile = Profile(
@@ -26,54 +31,96 @@ class _PersonnepageState extends State<Personnepage> {
       solde: 0);
   @override
   void didChangeDependencies() {
+    nomController.text = "Nom :";
+    prenomController.text = "Prenom :";
+    soldeController.text = "Solde :";
+    tlfController.text = "Telephone :";
+    validController.text = "Validité :";
    if(init){
-     APIprofileService().getProfileByCheque(widget.qrCode).then((value) {
-       setState(() {
-         this.profile = value;
-         loading = false;
-         init = false;
-       });
-     });
+     getPersonne();
      setState(() {
        init = false;
      });
    }
     super.didChangeDependencies();
   }
+
+  void getPersonne(){
+    try {
+      APIprofileService().getProfileByCheque(widget.qrCode).then((value) {
+        setState(() {
+          this.profile = value;
+          loading = false;
+        });
+        nomController.text = "Nom : ${this.profile.nom_marchand}";
+        prenomController.text = "Prenom : ${this.profile.prenom_marchand}";
+        soldeController.text = "Solde : ${this.profile.solde}";
+        tlfController.text = "Telephone : ${this.profile.tel}";
+        validController.text = "Validité : ${this.profile.validite}";
+      });
+    } catch(e){
+      setState(() {
+        loading = false;
+      });
+
+    }
+
+
+  }
   @override
   Widget build(BuildContext context) {
     final Nom1 = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Nom :',
+      child: TextFormField(
+        readOnly: true,
+        controller: nomController,
+        decoration: InputDecoration.collapsed(
+          border: InputBorder.none,
+        ),
         style: TextStyle(fontSize: 18.0, color: Colors.black),
       ),
     );
     final Prenom1 = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Prenom :',
+      child: TextFormField(
+        readOnly: true,
+        controller: prenomController,
+        decoration: InputDecoration.collapsed(
+          border: InputBorder.none,
+        ),
         style: TextStyle(fontSize: 18.0, color: Colors.black),
       ),
     );
     final SoldeRestant1 = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Solde :',
+      child: TextFormField(
+        readOnly: true,
+        controller: soldeController,
+        decoration: InputDecoration.collapsed(
+          border: InputBorder.none,
+        ),
         style: TextStyle(fontSize: 18.0, color: Colors.black),
       ),
     );
     final tel = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Telephone :',
+      child: TextFormField(
+        readOnly: true,
+        controller: tlfController,
+        decoration: InputDecoration.collapsed(
+          border: InputBorder.none,
+        ),
         style: TextStyle(fontSize: 18.0, color: Colors.black),
       ),
     );
     final validite = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Validité :',
+      child: TextFormField(
+        readOnly: true,
+        controller: validController,
+        decoration: InputDecoration.collapsed(
+          border: InputBorder.none,
+        ),
         style: TextStyle(fontSize: 18.0, color: Colors.black),
       ),
     );
@@ -119,33 +166,38 @@ class _PersonnepageState extends State<Personnepage> {
     return Scaffold(
       backgroundColor: Colors.lightBlue.shade50,
       body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          children: <Widget>[
-            SizedBox(height: 50.0),
-            Montant,
-            SizedBox(height: 8.0),
-            Nom1,
-            SizedBox(height: 8.0),
-            SizedBox(height: 8.0),
-            Prenom1,
-            SizedBox(height: 8.0),
-            SizedBox(height: 8.0),
-            SoldeRestant1,
-            SizedBox(height: 8.0),
-            SizedBox(height: 8.0),
-            tel,
-            SizedBox(height: 8.0),
-            SizedBox(height: 8.0),
-            validite,
-            SizedBox(height: 8.0),
-            SizedBox(height: 24.0),
-            ScanButton,
+        child: Stack(
+          children:[ ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            children: <Widget>[
+              SizedBox(height: 50.0),
+              Montant,
+              SizedBox(height: 8.0),
+              Nom1,
+              SizedBox(height: 8.0),
+              SizedBox(height: 8.0),
+              Prenom1,
+              SizedBox(height: 8.0),
+              SizedBox(height: 8.0),
+              SoldeRestant1,
+              SizedBox(height: 8.0),
+              SizedBox(height: 8.0),
+              tel,
+              SizedBox(height: 8.0),
+              SizedBox(height: 8.0),
+              validite,
+              SizedBox(height: 8.0),
+              SizedBox(height: 24.0),
+              ScanButton,
+            ],
+            //alucard,
+            //
+            //lorem
+          ),
+            if(loading)
+              Center(child: CircularProgressIndicator())
           ],
-          //alucard,
-          //
-          //lorem
         ),
       ),
     );
