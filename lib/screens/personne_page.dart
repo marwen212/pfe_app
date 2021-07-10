@@ -2,6 +2,7 @@ import 'package:association/api/api_profile.dart';
 import 'package:association/model/personne_model.dart';
 import 'package:flutter/material.dart';
 import 'validation_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Personnepage extends StatefulWidget {
   static String tag = 'personne-page';
@@ -13,13 +14,16 @@ class Personnepage extends StatefulWidget {
 }
 
 class _PersonnepageState extends State<Personnepage> {
+  static GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final nomController = TextEditingController();
   final prenomController = TextEditingController();
   final soldeController = TextEditingController();
   final tlfController = TextEditingController();
   final validController = TextEditingController();
+  final montantController = TextEditingController();
   var init = true;
   var loading = true;
+  var profileAPI = APIprofileService();
   Personne personne = Personne(
       nom: "",
       prenom: "",
@@ -46,11 +50,12 @@ class _PersonnepageState extends State<Personnepage> {
 
   void getPersonne() {
     try {
-      APIprofileService().getPersonneByCheque(widget.qrCode).then((value) {
+      profileAPI.getPersonneByCheque(widget.qrCode).then((value) {
         setState(() {
           this.personne = value;
           loading = false;
         });
+
         nomController.text = "Nom : ${this.personne.nom}";
         prenomController.text = "Prenom : ${this.personne.prenom}";
         soldeController.text = "Solde : ${this.personne.solde}";
@@ -62,6 +67,9 @@ class _PersonnepageState extends State<Personnepage> {
         loading = false;
       });
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -128,15 +136,24 @@ class _PersonnepageState extends State<Personnepage> {
         style: TextStyle(fontSize: 16.0, color: Colors.white),
       ),
     );*/
-    final Montant = TextFormField(
-      keyboardType: TextInputType.text,
-      autofocus: false,
-      decoration: InputDecoration(
-        hintText: 'Montant a payer',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-      ),
-    );
+    final Montant = Form(
+        key: _formKey,
+        child:TextFormField(
+          keyboardType: TextInputType.text,
+          autofocus: false,
+          controller: montantController,
+          decoration: InputDecoration(
+            hintText: 'Montant a payer',
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+          ),
+          validator: (value) {
+            if (value.isEmpty ) {
+              return "Entrer le montant";
+            }
+            return null;
+            },
+    ));
 
     final ScanButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -145,7 +162,8 @@ class _PersonnepageState extends State<Personnepage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () {
-          Navigator.of(context).pushNamed(Validationpage.tag);
+          _submit();
+          //Navigator.of(context).pushNamed(Validationpage.tag);
         },
         padding: EdgeInsets.all(15.0),
         color: Colors.white,
@@ -198,5 +216,62 @@ class _PersonnepageState extends State<Personnepage> {
         ),
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState.save();
+    // Navigator.of(context).pushNamed(ScanScreen.nameRoute);
+    setState(() {
+      loading = true;
+    });
+    try {
+      profileAPI.payer(double.parse(montantController.text.toString())).then((value) {
+        setState(() {
+          loading = false;
+        });
+        /* setState(() {
+          this.personne = value;
+          loading = false;
+        });*/
+        if(value) {
+          Fluttertoast.showToast(
+            msg: "Succès",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.green,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+          );
+          Navigator.of(context).pushNamed(Validationpage.tag);
+        }
+        else{
+          Fluttertoast.showToast(
+            msg: "Echec",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.grey,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+          );
+        }
+      });
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+      Fluttertoast.showToast(
+        msg: "Echec",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.grey,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+      );
+    }
+
+    setState(() {
+      loading = false;
+    });
   }
 }
