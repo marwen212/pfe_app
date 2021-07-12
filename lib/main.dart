@@ -73,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }*/
+import 'package:association/screens/navigation-drawer.dart';
+import 'package:association/screens/reclamation_page.dart';
 import 'package:association/screens/scan_qr_code.dart';
 import 'package:flutter/material.dart';
 import 'package:association/screens/login_page.dart';
@@ -80,6 +82,7 @@ import 'package:association/screens/home_page.dart';
 import 'package:association/screens/personne_page.dart';
 import 'package:association/screens/validation_page.dart';
 import 'package:association/model/profile_model.dart';
+
 
 
 void main() => runApp(MyApp());
@@ -90,34 +93,19 @@ class MyApp extends StatelessWidget {
     HomePage.tag: (context) => HomePage(),
     Personnepage.tag: (context) => Personnepage(),
     Validationpage.tag: (context) => Validationpage(),
+    ScanQRCode.tag: (context) =>ScanQRCode(),
+    Reclamationpage.tag: (context) =>Reclamationpage(),
+    NavigationDrawerWidget.tag: (context)=> NavigationDrawerWidget()
   };
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Image Loader',
+      title: 'جمعية النهوض للتنمية بالوردانين ',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Poppins',
-        primaryColor: Colors.white,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          elevation: 0,
-          foregroundColor: Colors.white,
-        ),
-        accentColor: Colors.redAccent,
-        textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 22.0, color: Colors.redAccent),
-          headline2: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.w700,
-            color: Colors.redAccent,
-          ),
-          bodyText1: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400,
-            color: Colors.blueAccent,
-          ),
-        ),
+        primarySwatch: Colors.lightBlue,
+        fontFamily: 'Nunito',
       ),
       home: LoginPage(),
       routes: routes,

@@ -92,3 +92,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/logo.jpg
+    - assets/alucard.jpg
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/Nunito.ttf

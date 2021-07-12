@@ -450,6 +450,7 @@ class _LoginPageState extends State<LoginPage> {
     return false;
   }
 }*/
+import 'package:association/screens/navigation-drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:association/api/api_service.dart';
@@ -473,6 +474,7 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
   LoginRequestModel loginRequestModel;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -488,63 +490,67 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  final logo = Hero(
+    tag: 'hero',
+    child: CircleAvatar(
+      backgroundColor: Colors.transparent,
+      radius: 60.0,
+      child: Image.asset('assets/logo.jpg'),
+    ),
+  );
+
+
   Widget _uiSetup(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Theme.of(context).accentColor,
-      body: SingleChildScrollView(
-        child: Column(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
+            Text('جمعية النهوض للتنمية بالوردانين ',
+                style: TextStyle(fontSize: 22,color: Colors.lightBlue,fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center),
+            SizedBox(height: 8.0),
+            logo,
+            SizedBox(height: 48.0),
             Stack(
               children: <Widget>[
                 Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                  margin: EdgeInsets.symmetric(vertical: 85, horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).primaryColor,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Theme.of(context).hintColor.withOpacity(0.2),
-                          offset: Offset(0, 10),
-                          blurRadius: 20)
-                    ],
-                  ),
                   child: Form(
                     key: globalFormKey,
                     child: Column(
                       children: <Widget>[
                         SizedBox(height: 25),
-                        Text(
-                          "Login",
-                          style: Theme.of(context).textTheme.headline2,
-                        ),
-                        SizedBox(height: 20),
+
                         new TextFormField(
+                          autofocus: false,
                           keyboardType: TextInputType.text,
                           onSaved: (input) => loginRequestModel.login = input,
                           /*validator: (input) => !input.contains('@')
                               ? "login Id should be valid"
                               : null,*/
-                          decoration: new InputDecoration(
-                            hintText: "login",
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .accentColor
-                                        .withOpacity(0.2))),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor)),
+                          decoration:
+                          new InputDecoration(
+                            fillColor: Colors.lightBlueAccent,
+                            hintText: 'Login',
+                            contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
                             prefixIcon: Icon(
                               Icons.login,
-                              color: Theme.of(context).accentColor,
+                              color: Colors.white,
                             ),
+                              filled: true
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 24.0),
                         new TextFormField(
+                          autofocus: false,
                           style:
                               TextStyle(color: Theme.of(context).accentColor),
                           keyboardType: TextInputType.text,
@@ -553,20 +559,18 @@ class _LoginPageState extends State<LoginPage> {
                           validator: (input) => input.length < 3
                               ? "Password should be more than 3 characters"
                               : null,
-                          obscureText: hidePassword,
+                            obscureText: true,
                           decoration: new InputDecoration(
+                            fillColor: Colors.lightBlueAccent,
                             hintText: "Password",
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .accentColor
-                                        .withOpacity(0.2))),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor)),
+                            contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                              border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,),
                             prefixIcon: Icon(
                               Icons.lock,
-                              color: Theme.of(context).accentColor,
+                              color: Colors.white,
                             ),
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -574,59 +578,64 @@ class _LoginPageState extends State<LoginPage> {
                                   hidePassword = !hidePassword;
                                 });
                               },
-                              color: Theme.of(context)
-                                  .accentColor
+                              color:Colors.white
                                   .withOpacity(0.4),
                               icon: Icon(hidePassword
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                             ),
+                            filled: true
                           ),
                         ),
                         SizedBox(height: 30),
-                        FlatButton(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 80),
-                          onPressed: () {
-                            if (validateAndSave()) {
-                              print(loginRequestModel.toJson());
+                        Padding(
+                            padding: EdgeInsets.symmetric(vertical: 30.0),
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              onPressed: () {
+                                if (validateAndSave()) {
+                                  print(loginRequestModel.toJson());
 
-                              setState(() {
-                                isApiCallProcess = true;
-                              });
-
-                              APIService apiService = new APIService();
-                              apiService.login(loginRequestModel).then((value) {
-                                if (value != null) {
                                   setState(() {
-                                    isApiCallProcess = false;
+                                    isApiCallProcess = true;
                                   });
 
-                                  if (value.api_token.isNotEmpty) {
-                                    LoginPage.token = value.api_token;
-                                    final snackBar = SnackBar(
-                                        content: Text("Login Successful"));
-                                    scaffoldKey.currentState
-                                        .showSnackBar(snackBar);
-                                    Navigator.of(context)
-                                        .pushNamed(HomePage.tag);
-                                  } else {
-                                    final snackBar =
-                                        SnackBar(content: Text(value.msg));
-                                    scaffoldKey.currentState
-                                        .showSnackBar(snackBar);
-                                  }
+                                  APIService apiService = new APIService();
+                                  apiService
+                                      .login(loginRequestModel)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isApiCallProcess = false;
+                                      });
+
+                                      if (value.api_token.isNotEmpty) {
+                                        LoginPage.token = value.api_token;
+                                        final snackBar = SnackBar(
+                                            content: Text("Login Successful"));
+                                        scaffoldKey.currentState
+                                            .showSnackBar(snackBar);
+                                        Navigator.of(context)
+                                            .pushNamed(NavigationDrawerWidget.tag);
+                                      } else {
+                                        final snackBar =
+                                            SnackBar(content: Text(value.msg));
+                                        scaffoldKey.currentState
+                                            .showSnackBar(snackBar);
+                                      }
+                                    }
+                                  });
                                 }
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Theme.of(context).accentColor,
-                          shape: StadiumBorder(),
-                        ),
+                              },
+                              padding: EdgeInsets.all(12),
+                              color: Colors.lightBlueAccent,
+                              child: Text(
+                                'Log In',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )),
                         SizedBox(height: 15),
                       ],
                     ),
