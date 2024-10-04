@@ -18,7 +18,7 @@ class LoginRequestModel {
 
   LoginRequestModel({
     this.login,
-    this.passwordddd,
+    this.password,
   });
 
   Map<String, dynamic> toJson() {
